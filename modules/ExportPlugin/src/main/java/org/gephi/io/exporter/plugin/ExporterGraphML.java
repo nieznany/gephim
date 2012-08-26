@@ -504,13 +504,15 @@ public class ExporterGraphML implements GraphExporter, CharacterExporter, LongTa
 
         if (e.getEdgeData().getId() != null && !e.getEdgeData().getId().isEmpty() && !String.valueOf(e.getId()).equals(e.getEdgeData().getId())) {
             Element idE = createEdgeId(document, e);
+            
             edgeE.appendChild(idE);
         }
 
         //Label
         if (e.getEdgeData().getLabel() != null && !e.getEdgeData().getLabel().isEmpty()) {
-            Element labelE = createEdgeLabel(document, e);
-            edgeE.appendChild(labelE);
+//            Element labelE = createEdgeLabel(document, e);
+//            edgeE.appendChild(labelE); // nah...
+        	edgeE.setAttribute("label", e.getEdgeData().getLabel()); // Set label as attribute, for proper edge type import from tinkerpop blueprints.
         }
 
         Element weightE = createEdgeWeight(document, e);

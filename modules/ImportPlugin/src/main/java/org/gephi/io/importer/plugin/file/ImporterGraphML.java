@@ -56,6 +56,7 @@ import org.gephi.io.importer.api.ContainerLoader;
 import org.gephi.io.importer.api.EdgeDefault;
 import org.gephi.io.importer.api.EdgeDraft;
 import org.gephi.io.importer.api.Issue;
+import org.gephi.io.importer.api.Issue.Level;
 import org.gephi.io.importer.api.NodeDraft;
 import org.gephi.io.importer.api.PropertiesAssociations;
 import org.gephi.io.importer.api.PropertiesAssociations.EdgeProperties;
@@ -85,6 +86,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
     private static final String EDGE_SOURCE = "source";
     private static final String EDGE_TARGET = "target";
     private static final String EDGE_DIRECTED = "directed";
+    private static final String EDGE_LABEL = "label";
     private static final String ATTRIBUTE = "key";
     private static final String ATTRIBUTE_ID = "id";
     private static final String ATTRIBUTE_TITLE = "attr.name";
@@ -366,6 +368,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
         String source = "";
         String target = "";
         String directed = "";
+        String label = "";
 
         //Attributes
         for (int i = 0; i < reader.getAttributeCount(); i++) {
@@ -378,7 +381,9 @@ public class ImporterGraphML implements FileImporter, LongTask {
                 id = reader.getAttributeValue(i);
             } else if (EDGE_DIRECTED.equalsIgnoreCase(attName)) {
                 directed = reader.getAttributeValue(i);
-            }
+            } else if (EDGE_LABEL.equalsIgnoreCase(attName)){
+            	label = reader.getAttributeValue(i);
+			}
         }
 
         EdgeDraft edge = container.factory().newEdgeDraft();
@@ -387,6 +392,9 @@ public class ImporterGraphML implements FileImporter, LongTask {
         NodeDraft nodeTarget = container.getNode(target);
         edge.setSource(nodeSource);
         edge.setTarget(nodeTarget);
+        report.log("read label attribute: "+label);
+        
+        edge.setLabel(label);
 
         //Type
         if (!directed.isEmpty()) {
@@ -469,6 +477,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
                             break;
                         case LABEL:
                             edge.setLabel(value);
+                            System.out.println("setting label: "+value);
                             break;
                         case ID:
                             edge.setId(value);
